@@ -124,6 +124,32 @@ def hdrpr(bin_dir, compiler, jobs, clean, build_var):
         os.chdir(cur_dir)
 
 
+def gatling(bin_dir, compiler, jobs, clean, build_var, mdl_root):
+    print_start("Building Gatling")
+
+    gatling_dir = repo_dir / "deps/gatling"
+    usd_dir = bin_dir / "USD/install"
+
+    if clean:
+        rm_dir(gatling_dir / "build")
+
+    cur_dir = os.getcwd()
+    os.chdir(str(gatling_dir))
+    os.environ['PXR_PLUGINPATH_NAME'] = str(usd_dir / "lib/usd")
+
+    try:
+        _cmake(compiler, jobs, build_var, [
+            f'-DUSD_ROOT={usd_dir}',
+            f'-DMDL_ROOT={mdl_root}',
+            f'-DCMAKE_INSTALL_PREFIX={usd_dir / "plugin/usd"}'
+        ], 'hdGatling')
+
+        subprocess.check_call(['cmake', '--install', 'build', '--component', 'hdGatling'])
+
+    finally:
+        os.chdir(cur_dir)
+
+
 def libs(bin_dir, build_var):
     print_start("Copying binaries to libs")
 
@@ -155,6 +181,10 @@ def main():
                     help="Build USD")
     ap.add_argument("-hdrpr", required=False, action="store_true",
                     help="Build HdRPR")
+    ap.add_argument("-gatling", required=False, action="store_true",
+                    help="Build Gatling")
+    ap.add_argument("-gatling-mdl-dir", required=False, type=str,
+                    help="The location of the unpacked MDL SDK")
     ap.add_argument("-bin-dir", required=False, type=str, default="",
                     help="Path to binary directory")
     ap.add_argument("-libs", required=False, action="store_true",
@@ -190,6 +220,11 @@ def main():
 
     if args.all or args.hdrpr:
         hdrpr(bin_dir, args.G, args.j, args.clean, args.build_var)
+
+    if args.all or args.gatling:
+        if args.gatling_mdl_dir is None:
+            ap.error("-gatling-mdl-dir must be set in conjunction with -gatling")
+        gatling(bin_dir, args.G, args.j, args.clean, args.build_var, args.gatling_mdl_dir)
 
     if args.all or args.libs:
         libs(bin_dir, args.build_var)
