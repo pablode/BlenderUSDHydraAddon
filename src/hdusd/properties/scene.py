@@ -20,6 +20,7 @@ from ..viewport import usd_collection
 from ..export.camera import CameraData
 from ..viewport.usd_collection import USD_CAMERA
 from . import HdUSDProperties, hdrpr_render, hdprman_render, log
+from . import GatlingRenderSettings
 
 
 DEFAULT_DELEGATE = 'HdRprPlugin'
@@ -49,6 +50,7 @@ class RenderSettings(bpy.types.PropertyGroup):
 
     hdrpr: bpy.props.PointerProperty(type=hdrpr_render.RenderSettings)
     hdprman: bpy.props.PointerProperty(type=hdprman_render.RenderSettings)
+    gatling: bpy.props.PointerProperty(type=GatlingRenderSettings)
 
     def nodetree_update(self, context):
         if not self.data_source:

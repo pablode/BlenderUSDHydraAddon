@@ -356,6 +356,10 @@ class ViewportEngine(Engine):
             self.renderer.SetRendererSetting('convergedVariance', hdprman.variance_threshold)
             self.renderer.SetRendererSetting('interactiveIntegratorTimeout', hdprman.timeout)
 
+        if settings.delegate == 'HdGatlingRendererPlugin':
+            for key in settings.gatling.__annotations__.keys():
+                self.renderer.SetRendererSetting(key, getattr(settings.gatling, key))
+
     def _check_restart_renderer(self, scene):
         restart = False
 

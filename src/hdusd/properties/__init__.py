@@ -19,6 +19,38 @@ from ..utils import stage_cache
 from ..utils import logging
 log = logging.Log('properties')
 
+from pxr import UsdImagingLite, Tf
+
+
+def _createGatlingRenderSettingsClass():
+    renderer = UsdImagingLite.Engine()
+    renderer.SetRendererPlugin('HdGatlingRendererPlugin')
+
+    props = {}
+    for setting in renderer.GetRendererSettingsList():
+        name_str = str(setting.name)
+        key_str = str(setting.key)
+        type_str = str(setting.type)
+
+        value = renderer.GetRendererSetting(Tf.MakeValidIdentifier(name_str))
+        if value is None:
+            value = setting.defValue
+
+        if type_str == 'FLAG':
+            props[key_str] = bpy.props.BoolProperty(name=name_str, default=value)
+        elif type_str == 'INT':
+            props[key_str] = bpy.props.IntProperty(name=name_str, default=value)
+        elif type_str == 'FLOAT':
+            props[key_str] = bpy.props.FloatProperty(name=name_str, default=value)
+        elif type_str == 'STRING':
+            props[key_str] = bpy.props.StringProperty(name=name_str, default=value)
+        else:
+            log.warn("Render setting {} of type {} not displayed".format(name_str, type_str))
+
+    return type('GatlingRenderSettings', (bpy.types.PropertyGroup,), {'__annotations__': props})
+
+GatlingRenderSettings = _createGatlingRenderSettingsClass()
+
 
 class HdUSDProperties(bpy.types.PropertyGroup):
     bl_type = None
@@ -64,6 +96,8 @@ register, unregister = bpy.utils.register_classes_factory((
     hdrpr_render.RenderSettings,
 
     hdprman_render.RenderSettings,
+
+    GatlingRenderSettings,
 
     usd_list.PrimPropertyItem,
     usd_list.UsdListItem,
