@@ -74,10 +74,7 @@ def usd(bin_dir, jobs, clean, build_var, prman, prman_location):
     build_usd.main(bin_dir, clean, build_var, *args)
 
 
-def _cmake(d, compiler, jobs, build_var, args, target):
-    cur_dir = os.getcwd()
-    ch_dir(d)
-
+def _cmake(compiler, jobs, build_var, args, target):
     build_args = ['-B', 'build', *args]
     if compiler:
         build_args += ['-G', compiler]
@@ -98,12 +95,8 @@ def _cmake(d, compiler, jobs, build_var, args, target):
     if jobs > 0:
         compile_args += ['--', '-j', str(jobs)]
 
-    try:
-        check_call('cmake', *build_args)
-        check_call('cmake', *compile_args)
-
-    finally:
-        ch_dir(cur_dir)
+    subprocess.check_call(['cmake', *build_args])
+    subprocess.check_call(['cmake', *compile_args])
 
 
 def hdrpr(bin_dir, compiler, jobs, clean, build_var):
@@ -115,14 +108,20 @@ def hdrpr(bin_dir, compiler, jobs, clean, build_var):
     if clean:
         rm_dir(hdrpr_dir / "build")
 
+    cur_dir = os.getcwd()
+    os.chdir(str(hdrpr_dir))
     os.environ['PXR_PLUGINPATH_NAME'] = str(usd_dir / "lib/usd")
 
-    _cmake(hdrpr_dir, compiler, jobs, build_var, [
-        f'-Dpxr_DIR={usd_dir}',
-        f'-DCMAKE_INSTALL_PREFIX={bin_dir / "USD/install"}',
-        '-DRPR_BUILD_AS_HOUDINI_PLUGIN=FALSE',
-        f'-DPYTHON_EXECUTABLE={sys.executable}',
-    ], 'install')
+    try:
+        _cmake(compiler, jobs, build_var, [
+            f'-Dpxr_DIR={usd_dir}',
+            f'-DCMAKE_INSTALL_PREFIX={bin_dir / "USD/install"}',
+            '-DRPR_BUILD_AS_HOUDINI_PLUGIN=FALSE',
+            f'-DPYTHON_EXECUTABLE={sys.executable}',
+        ], 'install')
+
+    finally:
+        os.chdir(cur_dir)
 
 
 def libs(bin_dir, build_var):
