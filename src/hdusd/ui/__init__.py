@@ -45,6 +45,7 @@ from . import (
     render,
     hdrpr_render,
     hdprman_render,
+    gatling_render,
     light,
     material,
     matlib,
@@ -79,6 +80,9 @@ register_classes, unregister_classes = bpy.utils.register_classes_factory([
     hdprman_render.HDUSD_RENDER_PT_hdprman_settings_samples_final,
     hdprman_render.HDUSD_RENDER_PT_hdprman_settings_viewport,
     hdprman_render.HDUSD_RENDER_PT_hdprman_settings_samples_viewport,
+
+    gatling_render.HDUSD_RENDER_PT_gatling_settings_final,
+    gatling_render.HDUSD_RENDER_PT_gatling_settings_viewport,
 
     light.HDUSD_LIGHT_PT_light,
 

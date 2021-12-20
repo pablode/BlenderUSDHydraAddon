@@ -291,6 +291,10 @@ class FinalEngine(Engine):
             renderer.SetRendererSetting('convergedVariance', hdprman.variance_threshold)
             renderer.SetRendererSetting('interactiveIntegratorTimeout', hdprman.timeout)
 
+        if settings.delegate == 'HdGatlingRendererPlugin':
+            for key in settings.gatling.__annotations__.keys():
+                renderer.SetRendererSetting(key, getattr(settings.gatling, key))
+
         return True
 
 
