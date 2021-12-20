@@ -74,7 +74,7 @@ def usd(bin_dir, jobs, clean, build_var, prman, prman_location):
     build_usd.main(bin_dir, clean, build_var, *args)
 
 
-def _cmake(d, compiler, jobs, build_var, args):
+def _cmake(d, compiler, jobs, build_var, args, target):
     cur_dir = os.getcwd()
     ch_dir(d)
 
@@ -93,7 +93,7 @@ def _cmake(d, compiler, jobs, build_var, args):
     compile_args = [
         '--build', 'build',
         '--config', build_name,
-        '--target', 'install'
+        '--target', target
     ]
     if jobs > 0:
         compile_args += ['--', '-j', str(jobs)]
@@ -122,7 +122,7 @@ def hdrpr(bin_dir, compiler, jobs, clean, build_var):
         f'-DCMAKE_INSTALL_PREFIX={bin_dir / "USD/install"}',
         '-DRPR_BUILD_AS_HOUDINI_PLUGIN=FALSE',
         f'-DPYTHON_EXECUTABLE={sys.executable}',
-    ])
+    ], 'install')
 
 
 def libs(bin_dir, build_var):
