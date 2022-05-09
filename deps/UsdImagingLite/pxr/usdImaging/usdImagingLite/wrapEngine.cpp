@@ -62,6 +62,9 @@ wrapEngine()
             .def("SetRendererAov", &Cls::SetRendererAov)
             .def("GetRendererAov", &Cls::GetRendererAov_wrap)
             .def("ClearRendererAovs", &Cls::ClearRendererAovs)
+            .def("GetRendererSettingsList",
+                &Cls::GetRendererSettingsList,
+                return_value_policy< TfPySequenceToList >())
             .def("GetRendererSetting", &Cls::GetRendererSetting)
             .def("SetRendererSetting", &Cls::SetRendererSetting)
             .def("SetCameraState", &Cls::SetCameraState)
