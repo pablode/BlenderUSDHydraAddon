@@ -174,6 +174,45 @@ void UsdImagingLiteEngine::Render(UsdPrim root, const UsdImagingLiteRenderParams
     }
 }
 
+UsdImagingGLRendererSettingsList UsdImagingLiteEngine::GetRendererSettingsList() const
+{
+    const HdRenderSettingDescriptorList descriptors = _renderDelegate->GetRenderSettingDescriptors();
+    UsdImagingGLRendererSettingsList ret;
+
+    for (auto const& desc : descriptors) {
+        UsdImagingGLRendererSetting r;
+        r.key = desc.key;
+        r.name = desc.name;
+        r.defValue = desc.defaultValue;
+
+        // Use the type of the default value to tell us what kind of
+        // widget to create...
+        if (r.defValue.IsHolding<bool>()) {
+            r.type = UsdImagingGLRendererSetting::TYPE_FLAG;
+        }
+        else if (r.defValue.IsHolding<int>() ||
+            r.defValue.IsHolding<unsigned int>()) {
+            r.type = UsdImagingGLRendererSetting::TYPE_INT;
+        }
+        else if (r.defValue.IsHolding<float>()) {
+            r.type = UsdImagingGLRendererSetting::TYPE_FLOAT;
+        }
+        else if (r.defValue.IsHolding<std::string>()) {
+            r.type = UsdImagingGLRendererSetting::TYPE_STRING;
+        }
+        else {
+            TF_WARN("Setting '%s' with type '%s' doesn't have a UI"
+                " implementation...",
+                r.name.c_str(),
+                r.defValue.GetTypeName().c_str());
+            continue;
+        }
+        ret.push_back(r);
+    }
+
+    return ret;
+}
+
 bool UsdImagingLiteEngine::IsConverged() const
 {
     TF_VERIFY(_renderIndex);
