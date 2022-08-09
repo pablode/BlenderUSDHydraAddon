@@ -1,6 +1,6 @@
 [submodule "deps/USD"]
 	path = deps/USD
-	url = git@github.com:PixarAnimationStudios/USD
+	url = https://github.com/pablode/USD
 [submodule "deps/HdRPR"]
 	path = deps/HdRPR
 	url = https://github.com/pablode/RadeonProRenderUSD
