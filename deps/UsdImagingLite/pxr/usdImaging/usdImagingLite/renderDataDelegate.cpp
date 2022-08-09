@@ -22,6 +22,7 @@
 // language governing permissions and limitations under the Apache License.
 //
 #include "renderDataDelegate.h"
+#include "tokens.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -54,7 +55,7 @@ VtValue HdRenderDataDelegate::Get(SdfPath const& id, TfToken const& key)
 GfMatrix4d HdRenderDataDelegate::GetTransform(SdfPath const& id)
 {
     // We expect this to be called only for the free cam.
-    VtValue val = GetCameraParamValue(id, HdCameraTokens->worldToViewMatrix);
+    VtValue val = GetCameraParamValue(id, UsdImagingLiteTokens->viewMatrix);
     GfMatrix4d xform(1.0);
     if (val.IsHolding<GfMatrix4d>()) {
         xform = val.Get<GfMatrix4d>().GetInverse(); // camera to world
@@ -69,8 +70,8 @@ GfMatrix4d HdRenderDataDelegate::GetTransform(SdfPath const& id)
 
 VtValue HdRenderDataDelegate::GetCameraParamValue(SdfPath const& id, TfToken const& key)
 {
-    if (key == HdCameraTokens->worldToViewMatrix ||
-        key == HdCameraTokens->projectionMatrix ||
+    if (key == UsdImagingLiteTokens->viewMatrix ||
+        key == HdCameraTokens->projection ||
         key == HdCameraTokens->clipPlanes ||
         key == HdCameraTokens->windowPolicy) {
 

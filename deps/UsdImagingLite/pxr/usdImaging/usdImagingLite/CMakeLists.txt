@@ -29,6 +29,7 @@ pxr_library(usdImagingLite
     PRIVATE_CLASSES
         renderTask
         renderDataDelegate
+        tokens
 
     PYTHON_CPPFILES
         moduleDeps.cpp

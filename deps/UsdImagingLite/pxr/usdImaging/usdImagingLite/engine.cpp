@@ -45,6 +45,7 @@
 #include "renderTask.h"
 #include "engine.h"
 #include "renderDataDelegate.h"
+#include "tokens.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -197,8 +198,8 @@ void UsdImagingLiteEngine::SetCameraState(const GfMatrix4d & viewMatrix, const G
     }
     _renderIndex->InsertSprim(HdPrimTypeTokens->camera, _renderDataDelegate.get(), freeCameraId);
     _renderDataDelegate->SetParameter(freeCameraId, HdCameraTokens->windowPolicy, VtValue(CameraUtilFit));
-    _renderDataDelegate->SetParameter(freeCameraId, HdCameraTokens->worldToViewMatrix, VtValue(viewMatrix));
-    _renderDataDelegate->SetParameter(freeCameraId, HdCameraTokens->projectionMatrix, VtValue(projectionMatrix));
+    _renderDataDelegate->SetParameter(freeCameraId, HdCameraTokens->projection, VtValue(projectionMatrix));
+    _renderDataDelegate->SetParameter(freeCameraId, UsdImagingLiteTokens->viewMatrix, VtValue(viewMatrix));
     _renderDataDelegate->SetParameter(freeCameraId, HdCameraTokens->clipPlanes, VtValue(std::vector<GfVec4d>()));
 
     _renderTaskParams.camera = freeCameraId;
